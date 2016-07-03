@@ -17,9 +17,7 @@ trait OAuth2Controller extends Controller with OAuthController { self: OptionalA
 
   protected val OAuth2StateKey = "play.auth.social.oauth2.state"
 
-  // TODO scope is optional in some services
-  // TODO some services have more optional parameter
-  def login(scope: String) = AsyncStack(ExecutionContextKey -> OAuthExecutionContext) { implicit request =>
+  def login = AsyncStack(ExecutionContextKey -> OAuthExecutionContext) { implicit request =>
     implicit val ec = StackActionExecutionContext
     loggedIn match {
       case Some(u) =>
@@ -28,21 +26,19 @@ trait OAuth2Controller extends Controller with OAuthController { self: OptionalA
         // should be more random ?
         val state = UUID.randomUUID().toString
         Future.successful(
-          Redirect(authenticator.getAuthorizationUrl(scope, state)).withSession(
+          Redirect(authenticator.getAuthorizationUrl(request, state)).withSession(
             request.session + (OAuth2StateKey -> state)
           )
         )
     }
   }
 
-  // TODO scope is optional in some services
-  // TODO some services have more optional parameter
-  def link(scope: String) = StackAction(ExecutionContextKey -> OAuthExecutionContext) { implicit request =>
+  def link = StackAction(ExecutionContextKey -> OAuthExecutionContext) { implicit request =>
     loggedIn match {
       case Some(u) =>
         // TODO should it be more random ?
         val state = UUID.randomUUID().toString
-        Redirect(authenticator.getAuthorizationUrl(scope, state)).withSession(
+        Redirect(authenticator.getAuthorizationUrl(request, state)).withSession(
           request.session + (OAuth2StateKey -> state)
         )
       case None =>

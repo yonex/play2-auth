@@ -54,7 +54,7 @@
                             <img src="@{u.avatarUrl}">
                         </p>
                         }.getOrElse {
-                            <a href="@routes.GitHubAuthController.link("user")">link GitHub</a>
+                            <a href="@{routes.GitHubAuthController.link() + "?scope=user"}>link GitHub</a>
                         }
                     </div>
 
@@ -69,7 +69,7 @@
                             <img src="@{u.coverUrl}">
                         </p>
                         }.getOrElse {
-                            <a href="@routes.FacebookAuthController.link("email")">link Facebook</a>
+                            <a href="@{routes.FacebookAuthController.link() + "?scope=email"}">link Facebook</a>
                         }
                     </div>
 
@@ -94,7 +94,7 @@
                             @u.accessToken
                         </p>
                         }.getOrElse {
-                            <a href="@routes.SlackAuthController.link("read")">link Slack</a>
+                            <a href="@{routes.SlackAuthController.link() + "?scope=read"}">link Slack</a>
                         }
                     </div>
 
@@ -105,10 +105,10 @@
                     <a href="@routes.TwitterAuthController.login">twitter login</a>
                 </p>
                 <p>
-                    <a href="@routes.GitHubAuthController.login("user")">github login</a>
+                    <a href="@{routes.GitHubAuthController.login() + "?scope=user"}">github login</a>
                 </p>
                 <p>
-                    <a href="@routes.FacebookAuthController.login("email")">facebook login</a>
+                    <a href="@{routes.FacebookAuthController.login() + "?scope=email"}">facebook login</a>
                 </p>
             }
         </div>

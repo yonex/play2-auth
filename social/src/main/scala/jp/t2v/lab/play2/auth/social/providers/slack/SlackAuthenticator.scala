@@ -7,7 +7,7 @@ import play.api.Logger
 import play.api.http.{ HeaderNames, MimeTypes }
 import play.api.libs.ws.{ WS, WSResponse }
 import play.api.Play.current
-import play.api.mvc.Results
+import play.api.mvc.{ AnyContent, Request, Results }
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.control.NonFatal
@@ -28,7 +28,8 @@ class SlackAuthenticator extends OAuth2Authenticator {
 
   override val callbackUrl: String = current.configuration.getString("slack.callbackURL").getOrElse("slack.callbackURL is missing")
 
-  def getAuthorizationUrl(scope: String, state: String): String = {
+  def getAuthorizationUrl(request: Request[AnyContent], state: String): String = {
+    val scope = request.getQueryString("scope").getOrElse("")
     val encodedClientId = URLEncoder.encode(clientId, "utf-8")
     val encodedRedirectUri = URLEncoder.encode(callbackUrl, "utf-8")
     val encodedScope = URLEncoder.encode(scope, "utf-8")
