@@ -5,13 +5,13 @@ GET        /login/twitter             controllers.TwitterAuthController.login
 GET        /link/twitter              controllers.TwitterAuthController.link
 GET        /authorize/twitter         controllers.TwitterAuthController.authorize
 
-GET        /login/github              controllers.GitHubAuthController.login(scope: String)
-GET        /link/github               controllers.GitHubAuthController.link(scope: String)
+GET        /login/github              controllers.GitHubAuthController.login()
+GET        /link/github               controllers.GitHubAuthController.link()
 GET        /authorize/github          controllers.GitHubAuthController.authorize
 
-GET        /login/facebook            controllers.FacebookAuthController.login(scope: String)
-GET        /link/facebook             controllers.FacebookAuthController.link(scope: String)
+GET        /login/facebook            controllers.FacebookAuthController.login()
+GET        /link/facebook             controllers.FacebookAuthController.link()
 GET        /authorize/facebook        controllers.FacebookAuthController.authorize
 
-GET        /link/slack                controllers.SlackAuthController.link(scope: String)
+GET        /link/slack                controllers.SlackAuthController.link()
 GET        /authorize/slack           controllers.SlackAuthController.authorize
