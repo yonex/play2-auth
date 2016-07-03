@@ -1,7 +1,11 @@
 package controllers.ephemeral
 
+import javax.inject.Inject
+
 import jp.t2v.lab.play2.auth.LoginLogout
 import jp.t2v.lab.play2.auth.sample.{ Account, Role }
+import play.api.Environment
+import play.api.cache.CacheApi
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc.{ Action, Controller }
@@ -10,9 +14,9 @@ import views.html
 import scala.concurrent.Future
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-object Sessions  extends Controller {
+class Sessions @Inject() (environment: Environment, cacheApi: CacheApi) extends Controller {
 
-  val loginLogout = new LoginLogout[Int, Account, Role](new AuthConfigImpl {})
+  val loginLogout = new LoginLogout[Int, Account, Role](new AuthConfigImpl(environment, cacheApi))
 
   val loginForm = Form {
     mapping("email" -> email, "password" -> text)(Account.authenticate)(_.map(u => (u.email, "")))

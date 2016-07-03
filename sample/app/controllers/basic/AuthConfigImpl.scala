@@ -3,13 +3,16 @@ package controllers.basic
 import play.api.mvc.RequestHeader
 import play.api.mvc.Results._
 
-import scala.concurrent.{Future, ExecutionContext}
+import scala.concurrent.{ ExecutionContext, Future }
 import jp.t2v.lab.play2.auth.AuthConfig
-import jp.t2v.lab.play2.auth.sample.{Role, Account}
+import jp.t2v.lab.play2.auth.sample.{ Account, Role }
 import jp.t2v.lab.play2.auth.sample.Role._
-import scala.reflect.{ClassTag, classTag}
+import play.api.Environment
+import play.api.cache.CacheApi
 
-trait AuthConfigImpl extends AuthConfig[Account, Account, Role] {
+import scala.reflect.{ ClassTag, classTag }
+
+class AuthConfigImpl(environment: Environment, cacheApi: CacheApi) extends AuthConfig[Account, Account, Role](environment, cacheApi) {
 
   type Id = Account
   type User = Account

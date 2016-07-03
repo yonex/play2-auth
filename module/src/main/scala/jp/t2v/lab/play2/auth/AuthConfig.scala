@@ -1,10 +1,15 @@
 package jp.t2v.lab.play2.auth
 
-import play.api.mvc._
-import scala.reflect.{ClassTag, classTag}
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.Inject
 
-trait AuthConfig[Id, User, Authority] {
+import play.api.{ Environment, Mode }
+import play.api.cache.CacheApi
+import play.api.mvc._
+
+import scala.reflect.{ ClassTag, classTag }
+import scala.concurrent.{ ExecutionContext, Future }
+
+abstract class AuthConfig[Id, User, Authority] (environment: Environment, cacheApi: CacheApi) {
 
   implicit def idTag: ClassTag[Id]
 
@@ -44,7 +49,7 @@ trait AuthConfig[Id, User, Authority] {
 
   lazy val tokenAccessor: TokenAccessor = new CookieTokenAccessor(
     cookieName = "PLAY2AUTH_SESS_ID",
-    cookieSecureOption = play.api.Play.maybeApplication.exists(app => play.api.Play.isProd(app)),
+    cookieSecureOption = environment.mode == Mode.Prod,
     cookieHttpOnlyOption = true,
     cookieDomainOption = None,
     cookiePathOption = "/",
@@ -81,7 +86,7 @@ trait AuthConfig[Id, User, Authority] {
   }
 
   private[auth] def extractToken(request: RequestHeader): Option[AuthenticityToken] = {
-    if (play.api.Play.maybeApplication.forall(app => play.api.Play.isTest(app))) {
+    if (environment.mode == Mode.Test) {
       request.headers.get("PLAY2_AUTH_TEST_TOKEN") orElse tokenAccessor.extract(request)
     } else {
       tokenAccessor.extract(request)

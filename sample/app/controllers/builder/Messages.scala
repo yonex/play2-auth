@@ -1,8 +1,12 @@
 package controllers.builder
 
+import javax.inject.Inject
+
 import jp.t2v.lab.play2.auth.{ AuthActionBuilders, AuthConfig }
 import jp.t2v.lab.play2.auth.sample.{ Account, Role }
 import jp.t2v.lab.play2.auth.sample.Role._
+import play.api.Environment
+import play.api.cache.CacheApi
 import play.api.mvc._
 import play.twirl.api.Html
 import scalikejdbc.{ DB, DBSession }
@@ -21,7 +25,7 @@ object TransactionalAction extends ActionBuilder[TransactionalRequest] {
   }
 }
 
-trait Messages extends Controller with AuthActionBuilders[Int, Account, Role] {
+class Messages @Inject() (environment: Environment, cacheApi: CacheApi) extends Controller with AuthActionBuilders[Int, Account, Role] {
 
   type Authority = Role
 
@@ -36,7 +40,7 @@ trait Messages extends Controller with AuthActionBuilders[Int, Account, Role] {
     }
   }
 
-  val authConfig: AuthConfig[Int, Account, Role] = new AuthConfigImpl {}
+  val authConfig: AuthConfig[Int, Account, Role] = new AuthConfigImpl(environment, cacheApi)
 
   def MyAction(authority: Authority): ActionBuilder[PjaxAuthRequest] = AuthorizationTxAction(authority) andThen PjaxRefiner
 
@@ -62,4 +66,3 @@ trait Messages extends Controller with AuthActionBuilders[Int, Account, Role] {
   }
 
 }
-object Messages extends Messages

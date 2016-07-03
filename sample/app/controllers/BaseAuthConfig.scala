@@ -1,21 +1,25 @@
 package controllers
 
-import jp.t2v.lab.play2.auth.{AuthenticityToken, AsyncIdContainer, AuthConfig}
-import jp.t2v.lab.play2.auth.sample.{Role, Account}
+import jp.t2v.lab.play2.auth.{ AsyncIdContainer, AuthConfig, AuthenticityToken }
+import jp.t2v.lab.play2.auth.sample.{ Account, Role }
 import jp.t2v.lab.play2.auth.sample.Role._
 import play.api.mvc.RequestHeader
 import play.api.mvc.Results._
 
-import scala.concurrent.{Future, ExecutionContext}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.reflect._
 import play.Logger
+
 import scala.collection.concurrent.TrieMap
 import scala.util.Random
 import java.security.SecureRandom
-import scala.annotation.tailrec
-import play.api.cache.Cache
 
-trait BaseAuthConfig  extends AuthConfig[Int, Account, Role] {
+import play.api.Environment
+
+import scala.annotation.tailrec
+import play.api.cache.{ Cache, CacheApi }
+
+abstract class BaseAuthConfig(environment: Environment, cacheApi: CacheApi) extends AuthConfig[Int, Account, Role](environment: Environment, cacheApi: CacheApi) {
 
   type Id = Int
   type User = Account

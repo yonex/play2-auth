@@ -10,6 +10,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 trait Helpers {
 
+/*
   implicit class AuthFakeRequest[A](fakeRequest: FakeRequest[A]) {
 
     def withLoggedIn(implicit config: AuthConfig): config.Id => FakeRequest[A] = { id =>
@@ -18,6 +19,6 @@ trait Helpers {
     }
 
   }
-
+*/
 }
 object Helpers extends Helpers
