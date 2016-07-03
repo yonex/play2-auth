@@ -1,11 +1,11 @@
 package controllers.builder
 
-import jp.t2v.lab.play2.auth.AuthActionBuilders
-import jp.t2v.lab.play2.auth.sample.Account
+import jp.t2v.lab.play2.auth.{ AuthActionBuilders, AuthConfig }
+import jp.t2v.lab.play2.auth.sample.{ Account, Role }
 import jp.t2v.lab.play2.auth.sample.Role._
 import play.api.mvc._
 import play.twirl.api.Html
-import scalikejdbc.{DB, DBSession}
+import scalikejdbc.{ DB, DBSession }
 import views.html
 
 import scala.concurrent.Future
@@ -21,7 +21,9 @@ object TransactionalAction extends ActionBuilder[TransactionalRequest] {
   }
 }
 
-trait Messages extends Controller with AuthActionBuilders with AuthConfigImpl {
+trait Messages extends Controller with AuthActionBuilders[Int, Account, Role] {
+
+  type Authority = Role
 
   type AuthTxRequest[+A] = GenericAuthRequest[A, TransactionalRequest]
   final def AuthorizationTxAction(authority: Authority): ActionBuilder[AuthTxRequest] = composeAuthorizationAction(TransactionalAction)(authority)
@@ -33,6 +35,8 @@ trait Messages extends Controller with AuthActionBuilders with AuthConfigImpl {
       Future.successful(new PjaxAuthRequest(template, request))
     }
   }
+
+  val authConfig: AuthConfig[Int, Account, Role] = new AuthConfigImpl {}
 
   def MyAction(authority: Authority): ActionBuilder[PjaxAuthRequest] = AuthorizationTxAction(authority) andThen PjaxRefiner
 

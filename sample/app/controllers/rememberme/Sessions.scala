@@ -1,16 +1,18 @@
 package controllers.rememberme
 
 import jp.t2v.lab.play2.auth.LoginLogout
-import jp.t2v.lab.play2.auth.sample.Account
+import jp.t2v.lab.play2.auth.sample.{ Account, Role }
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{ Action, Controller }
 import views.html
 
 import scala.concurrent.Future
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-object Sessions extends Controller with LoginLogout with AuthConfigImpl {
+object Sessions extends Controller {
+
+  val loginLogout = new LoginLogout[Int, Account, Role](new AuthConfigImpl {})
 
   val loginForm = Form {
     mapping("email" -> email, "password" -> text)(Account.authenticate)(_.map(u => (u.email, "")))
@@ -25,7 +27,7 @@ object Sessions extends Controller with LoginLogout with AuthConfigImpl {
   }
 
   def logout = Action.async { implicit request =>
-    gotoLogoutSucceeded.map(_.flashing(
+    loginLogout.gotoLogoutSucceeded.map(_.flashing(
       "success" -> "You've been logged out"
     ))
   }
@@ -36,7 +38,7 @@ object Sessions extends Controller with LoginLogout with AuthConfigImpl {
       formWithErrors => Future.successful(BadRequest(html.rememberme.login(formWithErrors, rememberme))),
       { user =>
         val req = request.copy(tags = request.tags + ("rememberme" -> rememberme.get.toString))
-        gotoLoginSucceeded(user.get.id)(req, defaultContext).map(_.withSession("rememberme" -> rememberme.get.toString))
+        loginLogout.gotoLoginSucceeded(user.get.id)(req, defaultContext).map(_.withSession("rememberme" -> rememberme.get.toString))
       }
     )
   }

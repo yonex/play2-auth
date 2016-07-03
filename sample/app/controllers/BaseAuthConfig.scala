@@ -15,7 +15,7 @@ import java.security.SecureRandom
 import scala.annotation.tailrec
 import play.api.cache.Cache
 
-trait BaseAuthConfig  extends AuthConfig {
+trait BaseAuthConfig  extends AuthConfig[Int, Account, Role] {
 
   type Id = Int
   type User = Account

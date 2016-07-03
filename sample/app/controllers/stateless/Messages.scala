@@ -1,12 +1,15 @@
 package controllers.stateless
 
 import controllers.stack.Pjax
-import jp.t2v.lab.play2.auth.AuthElement
+import jp.t2v.lab.play2.auth.{ AuthConfig, AuthElement }
+import jp.t2v.lab.play2.auth.sample.{ Account, Role }
 import play.api.mvc.Controller
 import views.html
 import jp.t2v.lab.play2.auth.sample.Role._
 
-trait Messages extends Controller with Pjax with AuthElement with AuthConfigImpl {
+trait Messages extends Controller with Pjax with AuthElement[Int, Account, Role] {
+
+  val authConfig: AuthConfig[Int, Account, Role] = new AuthConfigImpl {}
 
   def main = StackAction(AuthorityKey -> NormalUser) { implicit request =>
     val title = "message main"
@@ -28,7 +31,7 @@ trait Messages extends Controller with Pjax with AuthElement with AuthConfigImpl
     Ok(html.message.write(title))
   }
 
-  protected val fullTemplate: User => Template = html.stateless.fullTemplate.apply
+  protected val fullTemplate: Account => Template = html.stateless.fullTemplate.apply
 
 }
 object Messages extends Messages

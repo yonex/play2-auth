@@ -3,7 +3,11 @@ package jp.t2v.lab.play2.auth
 import play.api.mvc._
 import scala.concurrent.Future
 
-trait AuthActionBuilders extends AsyncAuth { self: AuthConfig with Controller =>
+trait AuthActionBuilders[Id, User, Authority] { self: Controller =>
+
+  val authConfig: AuthConfig[Id, User, Authority]
+
+  import authConfig._
 
   final case class GenericOptionalAuthRequest[+A, R[+_] <: Request[_]](user: Option[User], underlying: R[A]) extends WrappedRequest[A](underlying.asInstanceOf[Request[A]])
   final case class GenericAuthRequest[+A, R[+_] <: Request[_]](user: User, underlying: R[A]) extends WrappedRequest[A](underlying.asInstanceOf[Request[A]])

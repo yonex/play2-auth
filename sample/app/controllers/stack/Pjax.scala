@@ -2,15 +2,16 @@ package controllers.stack
 
 import controllers.BaseAuthConfig
 import jp.t2v.lab.play2.auth.AuthElement
-import jp.t2v.lab.play2.stackc.{RequestAttributeKey, RequestWithAttributes, StackableController}
-import play.api.mvc.{Controller, Result}
+import jp.t2v.lab.play2.auth.sample.{ Account, Role }
+import jp.t2v.lab.play2.stackc.{ RequestAttributeKey, RequestWithAttributes, StackableController }
+import play.api.mvc.{ Controller, Result }
 import play.twirl.api.Html
 import views.html
 
 import scala.concurrent.Future
 
-trait Pjax extends StackableController with AuthElement {
-    self: Controller with BaseAuthConfig =>
+trait Pjax extends StackableController with AuthElement[Int, Account, Role] {
+    self: Controller =>
 
   type Template = String => Html => Html
 
@@ -25,6 +26,6 @@ trait Pjax extends StackableController with AuthElement {
 
   implicit def template(implicit req: RequestWithAttributes[_]): Template = req.get(TemplateKey).get
 
-  protected val fullTemplate: User => Template
+  protected val fullTemplate: Account => Template
 
 }

@@ -1,13 +1,16 @@
 package controllers.csrf
 
 import controllers.stack.TokenValidateElement
-import jp.t2v.lab.play2.auth.AuthElement
+import jp.t2v.lab.play2.auth.{ AuthConfig, AuthElement }
+import jp.t2v.lab.play2.auth.sample.{ Account, Role }
 import jp.t2v.lab.play2.auth.sample.Role._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc.Controller
 
-trait PreventingCsrfSample extends Controller with TokenValidateElement with AuthElement with AuthConfigImpl {
+trait PreventingCsrfSample extends Controller with TokenValidateElement with AuthElement[Int, Account, Role] {
+
+  val authConfig: AuthConfig[Int, Account, Role] = new AuthConfigImpl {}
 
   def formWithToken = StackAction(AuthorityKey -> NormalUser, IgnoreTokenValidation -> true) { implicit req =>
     Ok(views.html.csrf.formWithToken())

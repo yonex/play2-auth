@@ -4,8 +4,10 @@ import play.api.mvc.{Result, Controller}
 import jp.t2v.lab.play2.stackc.{RequestWithAttributes, RequestAttributeKey, StackableController}
 import scala.concurrent.Future
 
-trait AuthElement extends StackableController with AsyncAuth {
-    self: Controller with AuthConfig =>
+trait AuthElement[Id, User, Authority] extends StackableController {
+    self: Controller =>
+
+  val authConfig: AuthConfig[Id, User, Authority]
 
   private[auth] case object AuthKey extends RequestAttributeKey[User]
   case object AuthorityKey extends RequestAttributeKey[Authority]
@@ -13,17 +15,17 @@ trait AuthElement extends StackableController with AsyncAuth {
   override def proceed[A](req: RequestWithAttributes[A])(f: RequestWithAttributes[A] => Future[Result]): Future[Result] = {
     implicit val (r, ctx) = (req, StackActionExecutionContext(req))
     req.get(AuthorityKey) map { authority =>
-      authorized(authority) flatMap {
+      authConfig.authorized(authority) flatMap {
         case Right((user, resultUpdater)) => super.proceed(req.set(AuthKey, user))(f).map(resultUpdater)
         case Left(result)                 => Future.successful(result)
       }
     } getOrElse {
-      restoreUser collect {
+      authConfig.restoreUser collect {
         case (Some(user), _) => user
       } flatMap {
-        authorizationFailed(req, _, None)
+        authConfig.authorizationFailed(req, _, None)
       } recoverWith {
-        case _ => authenticationFailed(req)
+        case _ => authConfig.authenticationFailed(req)
       }
     }
   }
@@ -32,14 +34,16 @@ trait AuthElement extends StackableController with AsyncAuth {
 
 }
 
-trait OptionalAuthElement extends StackableController with AsyncAuth {
-    self: Controller with AuthConfig =>
+trait OptionalAuthElement[Id, User, Authority] extends StackableController {
+    self: Controller =>
+
+  val authConfig: AuthConfig[Id, User, Authority]
 
   private[auth] case object AuthKey extends RequestAttributeKey[User]
 
   override def proceed[A](req: RequestWithAttributes[A])(f: RequestWithAttributes[A] => Future[Result]): Future[Result] = {
     implicit val (r, ctx) = (req, StackActionExecutionContext(req))
-    val maybeUserFuture = restoreUser.recover { case _ => None -> identity[Result] _ }
+    val maybeUserFuture = authConfig.restoreUser.recover { case _ => None -> identity[Result] _ }
     maybeUserFuture.flatMap { case (maybeUser, cookieUpdater) =>
       super.proceed(maybeUser.map(u => req.set(AuthKey, u)).getOrElse(req))(f).map(cookieUpdater)
     }
@@ -48,18 +52,20 @@ trait OptionalAuthElement extends StackableController with AsyncAuth {
   implicit def loggedIn[A](implicit req: RequestWithAttributes[A]): Option[User] = req.get(AuthKey)
 }
 
-trait AuthenticationElement extends StackableController with AsyncAuth {
-    self: Controller with AuthConfig =>
+trait AuthenticationElement[Id, User, Authority] extends StackableController {
+    self: Controller =>
+
+  val authConfig: AuthConfig[Id, User, Authority]
 
   private[auth] case object AuthKey extends RequestAttributeKey[User]
 
   override def proceed[A](req: RequestWithAttributes[A])(f: RequestWithAttributes[A] => Future[Result]): Future[Result] = {
     implicit val (r, ctx) = (req, StackActionExecutionContext(req))
-    restoreUser recover {
+    authConfig.restoreUser recover {
       case _ => None -> identity[Result] _
     } flatMap {
       case (Some(u), cookieUpdater) => super.proceed(req.set(AuthKey, u))(f).map(cookieUpdater)
-      case (None, _)                => authenticationFailed(req)
+      case (None, _)                => authConfig.authenticationFailed(req)
     }
   }
 

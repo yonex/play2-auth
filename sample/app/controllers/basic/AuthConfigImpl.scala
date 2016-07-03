@@ -9,7 +9,7 @@ import jp.t2v.lab.play2.auth.sample.{Role, Account}
 import jp.t2v.lab.play2.auth.sample.Role._
 import scala.reflect.{ClassTag, classTag}
 
-trait AuthConfigImpl extends AuthConfig {
+trait AuthConfigImpl extends AuthConfig[Account, Account, Role] {
 
   type Id = Account
   type User = Account
