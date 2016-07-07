@@ -4,7 +4,7 @@ import play.api.libs.ws.WSResponse
 
 import scala.concurrent.{ ExecutionContext, Future }
 
-trait OAuth2Authenticator extends OAuthAuthenticator {
+trait OAuth2Authenticator[AccessToken] extends OAuthAuthenticator[AccessToken] {
 
   val providerName: String
 

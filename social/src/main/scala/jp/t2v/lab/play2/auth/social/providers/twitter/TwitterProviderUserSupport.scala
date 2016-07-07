@@ -8,12 +8,11 @@ import play.api.libs.ws.{ WS, WSResponse }
 
 import scala.concurrent.{ ExecutionContext, Future }
 
-trait TwitterProviderUserSupport extends OAuthProviderUserSupport {
-  self: TwitterController =>
+class TwitterProviderUserSupport(authenticator: TwitterAuthenticator) extends OAuthProviderUserSupport[TwitterOAuth10aAccessToken] {
 
   type ProviderUser = TwitterUser
 
-  private def readProviderUser(accessToken: AccessToken, response: WSResponse): ProviderUser = {
+  private def readProviderUser(accessToken: TwitterOAuth10aAccessToken, response: WSResponse): ProviderUser = {
     val j = response.json
     TwitterUser(
       (j \ "id").as[Long],
@@ -26,7 +25,7 @@ trait TwitterProviderUserSupport extends OAuthProviderUserSupport {
     )
   }
 
-  def retrieveProviderUser(accessToken: AccessToken)(implicit ctx: ExecutionContext): Future[ProviderUser] = {
+  def retrieveProviderUser(accessToken: TwitterOAuth10aAccessToken)(implicit ctx: ExecutionContext): Future[ProviderUser] = {
     for {
       response <- WS.url("https://api.twitter.com/1.1/account/verify_credentials.json")
         .sign(OAuthCalculator(authenticator.consumerKey, RequestToken(accessToken.token, accessToken.secret))).get()

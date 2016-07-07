@@ -2,7 +2,7 @@ package jp.t2v.lab.play2.auth.social.core
 
 import play.api.libs.oauth._
 
-trait OAuth10aAuthenticator extends OAuthAuthenticator {
+trait OAuth10aAuthenticator[AccessToken] extends OAuthAuthenticator[AccessToken] {
 
   val callbackURL: String
 

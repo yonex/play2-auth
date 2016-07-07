@@ -9,17 +9,16 @@ import play.api.mvc._
 
 import scala.concurrent.Future
 
-trait OAuth10aController extends Controller with OAuthController {
-  self: OptionalAuthElement with AuthConfig =>
-
-  protected val authenticator: OAuth10aAuthenticator
+abstract class OAuth10aController[Id, User, Authority, AccessToken] (authConfig: AuthConfig[Id, User, Authority], val authenticator: OAuth10aAuthenticator[AccessToken])
+  extends OAuthController[Id, User, Authority, AccessToken](authConfig, authenticator)
+    with OptionalAuthElement[Id, User, Authority] {
 
   protected val RequestTokenSecretKey = "play.social.requestTokenSecret"
 
   def login = AsyncStack(ExecutionContextKey -> OAuthExecutionContext) { implicit request =>
     implicit val ec = StackActionExecutionContext
     loggedIn match {
-      case Some(_) => loginSucceeded(request)
+      case Some(_) => authConfig.loginSucceeded(request)
       case None => authenticator.oauth.retrieveRequestToken(authenticator.callbackURL) match {
         case Right(token) =>
           Future.successful(

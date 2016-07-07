@@ -11,9 +11,9 @@ import play.api.mvc._
 import scala.concurrent.Future
 import scala.util.control.NonFatal
 
-trait OAuth2Controller extends Controller with OAuthController { self: OptionalAuthElement with AuthConfig =>
-
-  protected val authenticator: OAuth2Authenticator
+abstract class OAuth2Controller[Id, User, Authority, AccessToken] (authConfig: AuthConfig[Id, User, Authority], val authenticator: OAuth2Authenticator[AccessToken])
+  extends OAuthController[Id, User, Authority, AccessToken](authConfig, authenticator)
+    with OptionalAuthElement[Id, User, Authority] {
 
   protected val OAuth2StateKey = "play.auth.social.oauth2.state"
 
@@ -23,7 +23,7 @@ trait OAuth2Controller extends Controller with OAuthController { self: OptionalA
     implicit val ec = StackActionExecutionContext
     loggedIn match {
       case Some(u) =>
-        loginSucceeded(request)
+        authConfig.loginSucceeded(request)
       case None =>
         // should be more random ?
         val state = UUID.randomUUID().toString

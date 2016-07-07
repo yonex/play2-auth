@@ -12,9 +12,7 @@ import play.api.mvc.Results
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.control.NonFatal
 
-class FacebookAuthenticator extends OAuth2Authenticator {
-
-  type AccessToken = String
+class FacebookAuthenticator extends OAuth2Authenticator[String] {
 
   val providerName: String = "facebook"
 
@@ -28,7 +26,7 @@ class FacebookAuthenticator extends OAuth2Authenticator {
 
   lazy val callbackUrl = current.configuration.getString("facebook.callbackURL").getOrElse(sys.error("facebook.callbackURL is missing"))
 
-  def retrieveAccessToken(code: String)(implicit ctx: ExecutionContext): Future[AccessToken] = {
+  def retrieveAccessToken(code: String)(implicit ctx: ExecutionContext): Future[String] = {
     WS.url(accessTokenUrl)
       .withQueryString(
         "client_id" -> clientId,

@@ -4,14 +4,11 @@ import jp.t2v.lab.play2.auth.social.core.OAuth10aController
 import jp.t2v.lab.play2.auth.{ AuthConfig, Login, OptionalAuthElement }
 import play.api.libs.oauth.RequestToken
 
-trait TwitterController extends OAuth10aController
-    with AuthConfig
-    with OptionalAuthElement
-    with Login {
+abstract class TwitterController[Id, User, Authority] (authConfig: AuthConfig[Id, User, Authority], authenticator: TwitterAuthenticator)
+  extends OAuth10aController(authConfig, authenticator)
+    with OptionalAuthElement[Id, User, Authority] {
 
-  val authenticator = new TwitterAuthenticator
-
-  def requestTokenToAccessToken(requestToken: RequestToken): AccessToken = {
+  def requestTokenToAccessToken(requestToken: RequestToken): TwitterOAuth10aAccessToken = {
     TwitterOAuth10aAccessToken(
       requestToken.token,
       requestToken.secret

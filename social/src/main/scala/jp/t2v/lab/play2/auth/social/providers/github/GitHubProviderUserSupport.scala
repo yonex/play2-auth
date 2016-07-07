@@ -6,8 +6,7 @@ import play.api.libs.ws.{ WS, WSResponse }
 
 import scala.concurrent.{ ExecutionContext, Future }
 
-trait GitHubProviderUserSupport extends OAuthProviderUserSupport {
-    self: GitHubController =>
+trait GitHubProviderUserSupport[AccessToken] extends OAuthProviderUserSupport[AccessToken] {
 
   type ProviderUser = GitHubUser
 

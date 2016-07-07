@@ -4,10 +4,11 @@ import jp.t2v.lab.play2.auth.social.core.OAuthProviderUserSupport
 import play.api.Logger
 import play.api.libs.ws.{ WS, WSResponse }
 import play.api.Play.current
+import play.api.mvc.Controller
+
 import scala.concurrent.{ ExecutionContext, Future }
 
-trait FacebookProviderUserSupport extends OAuthProviderUserSupport {
-  self: FacebookController =>
+trait FacebookProviderUserSupport extends OAuthProviderUserSupport[String] {
 
   type ProviderUser = FacebookUser
 
@@ -22,7 +23,7 @@ trait FacebookProviderUserSupport extends OAuthProviderUserSupport {
     )
   }
 
-  def retrieveProviderUser(accessToken: AccessToken)(implicit ctx: ExecutionContext): Future[ProviderUser] = {
+  def retrieveProviderUser(accessToken: String)(implicit ctx: ExecutionContext): Future[ProviderUser] = {
     for {
       response <- WS.url("https://graph.facebook.com/me")
         .withQueryString("access_token" -> accessToken, "fields" -> "name,first_name,last_name,picture.type(large),email")
