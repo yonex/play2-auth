@@ -1,5 +1,7 @@
 package controllers
 
+import javax.inject.Inject
+
 import models._
 import play.api.mvc.Results._
 import play.api.mvc._
@@ -9,12 +11,18 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.reflect.{ ClassTag, classTag }
 import jp.t2v.lab.play2.auth._
-import jp.t2v.lab.play2.auth.social.providers.twitter.{TwitterProviderUserSupport, TwitterController}
-import jp.t2v.lab.play2.auth.social.providers.facebook.{FacebookProviderUserSupport, FacebookController}
-import jp.t2v.lab.play2.auth.social.providers.github.{GitHubProviderUserSupport, GitHubController}
-import jp.t2v.lab.play2.auth.social.providers.slack.SlackController
+import jp.t2v.lab.play2.auth.social.providers.twitter.{ TwitterAuthenticator, TwitterController, TwitterOAuth10aAccessToken, TwitterProviderUserSupport }
+import jp.t2v.lab.play2.auth.social.providers.facebook.{ FacebookAuthenticator, FacebookController, FacebookProviderUserSupport }
+import jp.t2v.lab.play2.auth.social.providers.github.{ GitHubAuthenticator, GitHubController, GitHubProviderUserSupport }
+import jp.t2v.lab.play2.auth.social.providers.slack.{ SlackAuthenticator, SlackController }
+import play.api.Environment
+import play.api.cache.CacheApi
 
-object Application extends Controller with OptionalAuthElement with AuthConfigImpl with Logout {
+class Application @Inject() (val authConfig: AuthConfig[Long, models.User, models.Authority])
+  extends Controller
+    with OptionalAuthElement[Long, models.User, models.Authority] {
+
+  private val logoutHelper = new Logout[Long, models.User, models.Authority](authConfig)
 
   def index = StackAction { implicit request =>
     DB.readOnly { implicit session =>
@@ -28,19 +36,17 @@ object Application extends Controller with OptionalAuthElement with AuthConfigIm
   }
 
   def logout = Action.async { implicit request =>
-    gotoLogoutSucceeded
+    logoutHelper.gotoLogoutSucceeded
   }
 
 }
 
-trait AuthConfigImpl extends AuthConfig {
-  type Id = Long
-  type User = models.User
-  type Authority = models.Authority
-  val idTag: ClassTag[Id] = classTag[Id]
+class AuthConfigImpl @Inject() (environment: Environment, cacheApi: CacheApi) extends AuthConfig[Long, models.User, models.Authority](environment, cacheApi) {
+
+  val idTag: ClassTag[Long] = classTag[Long]
   val sessionTimeoutInSeconds: Int = 3600
 
-  def resolveUser(id: Id)(implicit ctx: ExecutionContext): Future[Option[User]] =
+  def resolveUser(id: Long)(implicit ctx: ExecutionContext): Future[Option[User]] =
     Future.successful(DB.readOnly { implicit session =>
       User.find(id)
     })
@@ -63,11 +69,13 @@ trait AuthConfigImpl extends AuthConfig {
 
 }
 
-object FacebookAuthController extends FacebookController
-    with AuthConfigImpl
+class FacebookAuthController @Inject() (val authConfig: AuthConfig[Long, models.User, models.Authority])
+  extends FacebookController[Long, models.User, models.Authority](authConfig, new FacebookAuthenticator)
     with FacebookProviderUserSupport {
 
-  override def onOAuthLinkSucceeded(token: AccessToken, consumerUser: User)(implicit request: RequestHeader, ctx: ExecutionContext): Future[Result] = {
+  private val loginHelper = new Login[Long, models.User, models.Authority](authConfig)
+
+  override def onOAuthLinkSucceeded(token: String, consumerUser: User)(implicit request: RequestHeader, ctx: ExecutionContext): Future[Result] = {
     retrieveProviderUser(token).map { providerUser =>
       DB.localTx { implicit session =>
         FacebookUser.save(consumerUser.id, providerUser)
@@ -76,16 +84,16 @@ object FacebookAuthController extends FacebookController
     }
   }
 
-  override def onOAuthLoginSucceeded(token: AccessToken)(implicit request: RequestHeader, ctx: ExecutionContext): Future[Result] = {
+  override def onOAuthLoginSucceeded(token: String)(implicit request: RequestHeader, ctx: ExecutionContext): Future[Result] = {
     retrieveProviderUser(token).flatMap { providerUser =>
       DB.localTx { implicit session =>
         FacebookUser.findById(providerUser.id) match {
           case None =>
             val id = User.create(providerUser.name, providerUser.coverUrl).id
             FacebookUser.save(id, providerUser)
-            gotoLoginSucceeded(id)
+            loginHelper.gotoLoginSucceeded(id)
           case Some(fu) =>
-            gotoLoginSucceeded(fu.userId)
+            loginHelper.gotoLoginSucceeded(fu.userId)
         }
       }
     }
@@ -93,11 +101,13 @@ object FacebookAuthController extends FacebookController
 
 }
 
-object GitHubAuthController extends GitHubController
-    with AuthConfigImpl
+class GitHubAuthController @Inject() (val authConfig: AuthConfig[Long, models.User, models.Authority])
+  extends GitHubController(authConfig, new GitHubAuthenticator)
     with GitHubProviderUserSupport {
 
-  override def onOAuthLinkSucceeded(token: AccessToken, consumerUser: User)(implicit request: RequestHeader, ctx: ExecutionContext): Future[Result] = {
+  private val loginHelper = new Login[Long, models.User, models.Authority](authConfig)
+
+  override def onOAuthLinkSucceeded(token: String, consumerUser: User)(implicit request: RequestHeader, ctx: ExecutionContext): Future[Result] = {
     retrieveProviderUser(token).map { providerUser =>
       DB.localTx { implicit session =>
         GitHubUser.save(consumerUser.id, providerUser)
@@ -106,16 +116,16 @@ object GitHubAuthController extends GitHubController
     }
   }
 
-  override def onOAuthLoginSucceeded(token: AccessToken)(implicit request: RequestHeader, ctx: ExecutionContext): Future[Result] = {
+  override def onOAuthLoginSucceeded(token: String)(implicit request: RequestHeader, ctx: ExecutionContext): Future[Result] = {
     retrieveProviderUser(token).flatMap { providerUser =>
       DB.localTx { implicit session =>
         GitHubUser.findById(providerUser.id) match {
           case None =>
             val id = User.create(providerUser.login, providerUser.avatarUrl).id
             GitHubUser.save(id, providerUser)
-            gotoLoginSucceeded(id)
+            loginHelper.gotoLoginSucceeded(id)
           case Some(gh) =>
-            gotoLoginSucceeded(gh.userId)
+            loginHelper.gotoLoginSucceeded(gh.userId)
         }
       }
     }
@@ -123,12 +133,16 @@ object GitHubAuthController extends GitHubController
 
 }
 
-object TwitterAuthController extends TwitterController
-    with AuthConfigImpl
-    with TwitterProviderUserSupport {
+class TwitterAuthController @Inject() (val authConfig: AuthConfig[Long, models.User, models.Authority], authenticator: TwitterAuthenticator)
+  extends TwitterController[Long, models.User, models.Authority](authConfig, authenticator)
+{
 
-  override def onOAuthLinkSucceeded(token: AccessToken, consumerUser: User)(implicit request: RequestHeader, ctx: ExecutionContext): Future[Result] = {
-    retrieveProviderUser(token).map { providerUser =>
+  val userSupport = new TwitterProviderUserSupport(authenticator)
+
+  private val loginHelper = new Login[Long, models.User, models.Authority](authConfig)
+
+  override def onOAuthLinkSucceeded(token: TwitterOAuth10aAccessToken, consumerUser: User)(implicit request: RequestHeader, ctx: ExecutionContext): Future[Result] = {
+    userSupport.retrieveProviderUser(token).map { providerUser =>
       DB.localTx { implicit session =>
         TwitterUser.save(consumerUser.id, providerUser)
         Redirect(routes.Application.index)
@@ -136,16 +150,16 @@ object TwitterAuthController extends TwitterController
     }
   }
 
-  override def onOAuthLoginSucceeded(token: AccessToken)(implicit request: RequestHeader, ctx: ExecutionContext): Future[Result] = {
-    retrieveProviderUser(token).flatMap { providerUser =>
+  override def onOAuthLoginSucceeded(token: TwitterOAuth10aAccessToken)(implicit request: RequestHeader, ctx: ExecutionContext): Future[Result] = {
+    userSupport.retrieveProviderUser(token).flatMap { providerUser =>
       DB.localTx { implicit session =>
         TwitterUser.findById(providerUser.id) match {
           case None =>
             val id = User.create(providerUser.screenName, providerUser.profileImageUrl).id
             TwitterUser.save(id, providerUser)
-            gotoLoginSucceeded(id)
+            loginHelper.gotoLoginSucceeded(id)
           case Some(tu) =>
-            gotoLoginSucceeded(tu.userId)
+            loginHelper.gotoLoginSucceeded(tu.userId)
         }
       }
     }
@@ -153,10 +167,10 @@ object TwitterAuthController extends TwitterController
 
 }
 
-object SlackAuthController extends SlackController
-    with AuthConfigImpl {
+class SlackAuthController @Inject() (val authConfig: AuthConfig[Long, models.User, models.Authority])
+  extends SlackController(authConfig, new SlackAuthenticator) {
 
-  override def onOAuthLinkSucceeded(accessToken: AccessToken, consumerUser: User)(implicit request: RequestHeader, ctx: ExecutionContext): Future[Result] = {
+  override def onOAuthLinkSucceeded(accessToken: String, consumerUser: User)(implicit request: RequestHeader, ctx: ExecutionContext): Future[Result] = {
     Future.successful {
       DB.localTx { implicit session =>
         SlackAccessToken.save(consumerUser.id, accessToken)
@@ -165,7 +179,7 @@ object SlackAuthController extends SlackController
     }
   }
 
-  override def onOAuthLoginSucceeded(accessToken: AccessToken)(implicit request: RequestHeader, ctx: ExecutionContext): Future[Result] = {
+  override def onOAuthLoginSucceeded(accessToken: String)(implicit request: RequestHeader, ctx: ExecutionContext): Future[Result] = {
     ???
   }
 
