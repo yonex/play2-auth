@@ -12,7 +12,7 @@ object ApplicationBuild extends Build {
     version            := "0.14.2",
     scalaVersion       := "2.11.8",
     crossScalaVersions := Seq("2.10.5", "2.11.8"),
-    organization       := "jp.t2v",
+    organization       := "com.github.tototoshi",
     resolvers          ++=
       Resolver.typesafeRepo("releases") ::
       Resolver.sonatypeRepo("releases") ::
@@ -48,6 +48,11 @@ object ApplicationBuild extends Build {
             <id>gakuzzzz</id>
             <name>gakuzzzz</name>
             <url>https://github.com/gakuzzzz</url>
+          </developer>
+          <developer>
+            <id>tototoshi</id>
+            <name>Toshiyuki Takahashi</name>
+            <url>https://tototoshi.github.io</url>
           </developer>
         </developers>
   }
