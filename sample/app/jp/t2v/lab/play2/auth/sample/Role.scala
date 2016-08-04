@@ -1,4 +1,4 @@
-package jp.t2v.lab.play2.auth.sample
+package com.github.tototoshi.play2.auth.sample
 
 import scalikejdbc.TypeBinder
 

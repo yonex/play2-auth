@@ -6,9 +6,9 @@ Play2.x module for Authentication and Authorization [![Build Status](https://sec
 Scaladoc
 ----------------------------------------
 
-- [![play2-auth scaladoc](http://javadoc-badge.appspot.com/jp.t2v/play2-auth_2.11.svg?label=play2-auth)](http://javadoc-badge.appspot.com/jp.t2v/play2-auth_2.11/index.html#jp.t2v.lab.play2.auth.package)
-- [![play2-auth-social scaladoc](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-social_2.11.svg?label=play2-auth-social)](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-social_2.11/index.html#jp.t2v.lab.play2.auth.social.package)
-- [![play2-auth-test scaladoc](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-test_2.11.svg?label=play2-auth-test)](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-test_2.11/index.html#jp.t2v.lab.play2.auth.test.package)
+- [![play2-auth scaladoc](http://javadoc-badge.appspot.com/jp.t2v/play2-auth_2.11.svg?label=play2-auth)](http://javadoc-badge.appspot.com/jp.t2v/play2-auth_2.11/index.html#com.github.tototoshi.play2.auth.package)
+- [![play2-auth-social scaladoc](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-social_2.11.svg?label=play2-auth-social)](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-social_2.11/index.html#com.github.tototoshi.play2.auth.social.package)
+- [![play2-auth-test scaladoc](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-test_2.11.svg?label=play2-auth-test)](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-test_2.11/index.html#com.github.tototoshi.play2.auth.test.package)
 
 
 対象
@@ -81,7 +81,7 @@ For example: `Build.scala`
 使い方
 ---------------------------------------
 
-1. `app/controllers` 以下に `jp.t2v.lab.play2.auth.AuthConfig` を実装した `trait` を作成します。
+1. `app/controllers` 以下に `com.github.tototoshi.play2.auth.AuthConfig` を実装した `trait` を作成します。
 
     ```scala
     // (例)
@@ -182,7 +182,7 @@ For example: `Build.scala`
 
 1. 次にログイン、ログアウトを行う `Controller` を作成します。
    この `Controller` に、先ほど作成した `AuthConfigImpl` トレイトと、
-   `jp.t2v.lab.play2.auth.LoginLogout` トレイトを mixin します。
+   `com.github.tototoshi.play2.auth.LoginLogout` トレイトを mixin します。
 
     ```scala
     object Application extends Controller with LoginLogout with AuthConfigImpl {
@@ -232,7 +232,7 @@ For example: `Build.scala`
     ```
 
 1. 最後は、好きな `Controller` に 先ほど作成した `AuthConfigImpl` トレイトと
-   `jp.t2v.lab.play2.auth.AuthElement` トレイト を mixin すれば、認証/認可の仕組みを導入することができます。
+   `com.github.tototoshi.play2.auth.AuthElement` トレイト を mixin すれば、認証/認可の仕組みを導入することができます。
 
     ```scala
     object Message extends Controller with AuthElement with AuthConfigImpl {
@@ -287,7 +287,7 @@ import org.specs2.mutable._
 import play.api.test._
 import play.api.test.Helpers._
 import controllers.{AuthConfigImpl, Messages}
-import jp.t2v.lab.play2.auth.test.Helpers._
+import com.github.tototoshi.play2.auth.test.Helpers._
 
 class ApplicationSpec extends Specification {
 
@@ -303,7 +303,7 @@ class ApplicationSpec extends Specification {
 }
 ```
 
-1. まず `jp.t2v.lab.play2.auth.test.Helpers._` を import します。
+1. まず `com.github.tototoshi.play2.auth.test.Helpers._` を import します。
 1. 次にテスト対象に mixin されているものと同じ `AuthConfigImpl` のインスタンスを生成します。
 
         object config extends AuthConfigImpl

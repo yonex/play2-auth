@@ -2,9 +2,9 @@ package controllers.builder
 
 import javax.inject.Inject
 
-import jp.t2v.lab.play2.auth.AuthActionBuilders
-import jp.t2v.lab.play2.auth.sample.Account
-import jp.t2v.lab.play2.auth.sample.Role._
+import com.github.tototoshi.play2.auth.AuthActionBuilders
+import com.github.tototoshi.play2.auth.sample.Account
+import com.github.tototoshi.play2.auth.sample.Role._
 import play.api.Environment
 import play.api.mvc._
 import play.twirl.api.Html

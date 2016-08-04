@@ -3,10 +3,10 @@ package controllers.rememberme
 import javax.inject.Inject
 
 import controllers.stack.Pjax
-import jp.t2v.lab.play2.auth.AuthElement
+import com.github.tototoshi.play2.auth.AuthElement
 import play.api.mvc.Controller
 import views.html
-import jp.t2v.lab.play2.auth.sample.Role._
+import com.github.tototoshi.play2.auth.sample.Role._
 import play.api.Environment
 
 class Messages @Inject() (val environment: Environment) extends Controller with Pjax with AuthElement with AuthConfigImpl {

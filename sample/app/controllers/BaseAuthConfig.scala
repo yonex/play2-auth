@@ -1,8 +1,8 @@
 package controllers
 
-import jp.t2v.lab.play2.auth.{AuthenticityToken, AsyncIdContainer, AuthConfig}
-import jp.t2v.lab.play2.auth.sample.{Role, Account}
-import jp.t2v.lab.play2.auth.sample.Role._
+import com.github.tototoshi.play2.auth.{AuthenticityToken, AsyncIdContainer, AuthConfig}
+import com.github.tototoshi.play2.auth.sample.{Role, Account}
+import com.github.tototoshi.play2.auth.sample.Role._
 import play.api.mvc.RequestHeader
 import play.api.mvc.Results._
 

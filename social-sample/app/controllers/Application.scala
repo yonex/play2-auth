@@ -10,11 +10,11 @@ import scalikejdbc.DB
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.reflect.{ ClassTag, classTag }
-import jp.t2v.lab.play2.auth._
-import jp.t2v.lab.play2.auth.social.providers.twitter.{ TwitterController, TwitterProviderUserSupport }
-import jp.t2v.lab.play2.auth.social.providers.facebook.{ FacebookController, FacebookProviderUserSupport }
-import jp.t2v.lab.play2.auth.social.providers.github.{ GitHubController, GitHubProviderUserSupport }
-import jp.t2v.lab.play2.auth.social.providers.slack.SlackController
+import com.github.tototoshi.play2.auth._
+import com.github.tototoshi.play2.auth.social.providers.twitter.{ TwitterController, TwitterProviderUserSupport }
+import com.github.tototoshi.play2.auth.social.providers.facebook.{ FacebookController, FacebookProviderUserSupport }
+import com.github.tototoshi.play2.auth.social.providers.github.{ GitHubController, GitHubProviderUserSupport }
+import com.github.tototoshi.play2.auth.social.providers.slack.SlackController
 import play.api.Environment
 import play.api.cache.CacheApi
 

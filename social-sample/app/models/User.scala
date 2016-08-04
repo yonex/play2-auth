@@ -1,8 +1,8 @@
 package models
 
-import jp.t2v.lab.play2.auth.social.providers
+import com.github.tototoshi.play2.auth.social.providers
 import scalikejdbc._
-import jp.t2v.lab.play2.auth.social.providers.{facebook, twitter}
+import com.github.tototoshi.play2.auth.social.providers.{facebook, twitter}
 
 sealed trait Authority
 case object Admin extends Authority

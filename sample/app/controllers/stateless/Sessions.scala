@@ -2,8 +2,8 @@ package controllers.stateless
 
 import javax.inject.Inject
 
-import jp.t2v.lab.play2.auth.LoginLogout
-import jp.t2v.lab.play2.auth.sample.Account
+import com.github.tototoshi.play2.auth.LoginLogout
+import com.github.tototoshi.play2.auth.sample.Account
 import play.api.Environment
 import play.api.data.Form
 import play.api.data.Forms._

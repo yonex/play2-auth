@@ -1,7 +1,7 @@
 import play.api._
 
-import jp.t2v.lab.play2.auth.sample._
-import jp.t2v.lab.play2.auth.sample.Role._
+import com.github.tototoshi.play2.auth.sample._
+import com.github.tototoshi.play2.auth.sample.Role._
 import scalikejdbc._
 
 object Global extends GlobalSettings {

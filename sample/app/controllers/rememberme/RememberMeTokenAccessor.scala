@@ -1,6 +1,6 @@
 package controllers.rememberme
 
-import jp.t2v.lab.play2.auth._
+import com.github.tototoshi.play2.auth._
 import play.api.mvc.{Cookie, RequestHeader, Result}
 
 class RememberMeTokenAccessor(maxAge: Int) extends CookieTokenAccessor() {

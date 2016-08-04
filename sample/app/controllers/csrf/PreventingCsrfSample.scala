@@ -3,8 +3,8 @@ package controllers.csrf
 import javax.inject.Inject
 
 import controllers.stack.TokenValidateElement
-import jp.t2v.lab.play2.auth.AuthElement
-import jp.t2v.lab.play2.auth.sample.Role._
+import com.github.tototoshi.play2.auth.AuthElement
+import com.github.tototoshi.play2.auth.sample.Role._
 import play.api.Environment
 import play.api.data.Form
 import play.api.data.Forms._

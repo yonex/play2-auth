@@ -101,7 +101,7 @@ object ApplicationBuild extends Build {
       libraryDependencies += "org.scalikejdbc"      %% "scalikejdbc-play-fixture"          % "2.4.0",
       libraryDependencies += "org.flywaydb"         %% "flyway-play"                       % "2.0.1",
       TwirlKeys.templateImports in Compile ++= Seq(
-        "jp.t2v.lab.play2.auth.sample._",
+        "com.github.tototoshi.play2.auth.sample._",
         "play.api.data.Form",
         "play.api.mvc.Flash",
         "views._",

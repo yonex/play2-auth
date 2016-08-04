@@ -1,7 +1,7 @@
 package controllers.stack
 
 import controllers.BaseAuthConfig
-import jp.t2v.lab.play2.auth.AuthElement
+import com.github.tototoshi.play2.auth.AuthElement
 import jp.t2v.lab.play2.stackc.{RequestAttributeKey, RequestWithAttributes, StackableController}
 import play.api.mvc.{Controller, Result}
 import play.twirl.api.Html

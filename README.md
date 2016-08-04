@@ -7,9 +7,9 @@ This module offers Authentication and Authorization features to Play2.x applicat
 Scaladoc
 ----------------------------------------
 
-- [![play2-auth scaladoc](http://javadoc-badge.appspot.com/jp.t2v/play2-auth_2.11.svg?label=play2-auth)](http://javadoc-badge.appspot.com/jp.t2v/play2-auth_2.11/index.html#jp.t2v.lab.play2.auth.package)
-- [![play2-auth-social scaladoc](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-social_2.11.svg?label=play2-auth-social)](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-social_2.11/index.html#jp.t2v.lab.play2.auth.social.package)
-- [![play2-auth-test scaladoc](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-test_2.11.svg?label=play2-auth-test)](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-test_2.11/index.html#jp.t2v.lab.play2.auth.test.package)
+- [![play2-auth scaladoc](http://javadoc-badge.appspot.com/jp.t2v/play2-auth_2.11.svg?label=play2-auth)](http://javadoc-badge.appspot.com/jp.t2v/play2-auth_2.11/index.html#com.github.tototoshi.play2.auth.package)
+- [![play2-auth-social scaladoc](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-social_2.11.svg?label=play2-auth-social)](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-social_2.11/index.html#com.github.tototoshi.play2.auth.social.package)
+- [![play2-auth-test scaladoc](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-test_2.11.svg?label=play2-auth-test)](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-test_2.11/index.html#com.github.tototoshi.play2.auth.test.package)
 
 
 Target
@@ -83,11 +83,11 @@ For example your `Build.scala` might look like this:
 Usage
 ---------------------------------------
 
-1. First create a trait that extends `jp.t2v.lab.play2.auth.AuthConfig` in `app/controllers`.
+1. First create a trait that extends `com.github.tototoshi.play2.auth.AuthConfig` in `app/controllers`.
 
     ```scala
     // Example
-    import jp.t2v.lab.play2.auth._
+    import com.github.tototoshi.play2.auth._
 
     trait AuthConfigImpl extends AuthConfig {
 
@@ -185,7 +185,7 @@ Usage
     ```
 
 1. Next create a `Controller` that defines both login and logout actions.
-   This `Controller` mixes in the `jp.t2v.lab.play2.auth.LoginLogout` trait and
+   This `Controller` mixes in the `com.github.tototoshi.play2.auth.LoginLogout` trait and
    the trait that you created in first step.
 
     ```scala
@@ -233,7 +233,7 @@ Usage
     }
     ```
 
-1. Lastly, mix `jp.t2v.lab.play2.auth.AuthElement` trait and the trait that was created in the first step
+1. Lastly, mix `com.github.tototoshi.play2.auth.AuthElement` trait and the trait that was created in the first step
    into your Controllers:
 
     ```scala
@@ -291,7 +291,7 @@ import org.specs2.mutable._
 import play.api.test._
 import play.api.test.Helpers._
 import controllers.{AuthConfigImpl, Messages}
-import jp.t2v.lab.play2.auth.test.Helpers._
+import com.github.tototoshi.play2.auth.test.Helpers._
 
 class ApplicationSpec extends Specification {
 
@@ -307,7 +307,7 @@ class ApplicationSpec extends Specification {
 }
 ```
 
-1. Import `jp.t2v.lab.play2.auth.test.Helpers._`
+1. Import `com.github.tototoshi.play2.auth.test.Helpers._`
 1. Define instance what is mixed-in `AuthConfigImpl`
 
         object config extends AuthConfigImpl

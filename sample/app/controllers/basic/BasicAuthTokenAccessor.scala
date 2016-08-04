@@ -1,6 +1,6 @@
 package controllers.basic
 
-import jp.t2v.lab.play2.auth.{AuthenticityToken, TokenAccessor}
+import com.github.tototoshi.play2.auth.{AuthenticityToken, TokenAccessor}
 import play.api.mvc.{Result, RequestHeader}
 import org.apache.commons.codec.binary.Base64
 import java.nio.charset.Charset
