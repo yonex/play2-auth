@@ -1,16 +1,7 @@
-Play2.x module for Authentication and Authorization [![Build Status](https://secure.travis-ci.org/t2v/play2-auth.png)](https://travis-ci.org/t2v/play2-auth)
+Play2.x module for Authentication and Authorization
 ===========================================================
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/t2v/play2-auth?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 This module offers Authentication and Authorization features to Play2.x applications
-
-Scaladoc
-----------------------------------------
-
-- [![play2-auth scaladoc](http://javadoc-badge.appspot.com/jp.t2v/play2-auth_2.11.svg?label=play2-auth)](http://javadoc-badge.appspot.com/jp.t2v/play2-auth_2.11/index.html#com.github.tototoshi.play2.auth.package)
-- [![play2-auth-social scaladoc](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-social_2.11.svg?label=play2-auth-social)](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-social_2.11/index.html#com.github.tototoshi.play2.auth.social.package)
-- [![play2-auth-test scaladoc](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-test_2.11.svg?label=play2-auth-test)](http://javadoc-badge.appspot.com/jp.t2v/play2-auth-test_2.11/index.html#com.github.tototoshi.play2.auth.test.package)
-
 
 Target
 ----------------------------------------
@@ -29,13 +20,13 @@ If you use an Email or a userID as an identifier,
 users can not invalidate their session if the session cookie is intercepted.
 
 This module creates a unique SessionID using a secure random number generator.
-Even if the sessionId cookie is intercepted, users can invalidate the session by logging in again. 
+Even if the sessionId cookie is intercepted, users can invalidate the session by logging in again.
 Your application can expire sessions after a set time limit.
 
 
 ### Flexiblity
 
-Since the `Security` trait in Play2.x API returns `Action`, 
+Since the `Security` trait in Play2.x API returns `Action`,
 complicated action methods wind up deeply nested.
 
 Play2x-Auth provides a way of composition.
@@ -61,7 +52,14 @@ Installation
 ---------------------------------------
 
 Add dependency declarations into your `Build.scala` or `build.sbt` file:
+* __for Play2.5.x__
 
+```scala
+"com.github.tototoshi" %% "play2-auth"        % "0.15.0-SNAPSHOT",
+"com.github.tototoshi" %% "play2-auth-social" % "0.15.0-SNAPShOT", // for social login
+"com.github.tototoshi" %% "play2-auth-test"   % "0.15.0-SNAPSHOT" % "test",
+play.sbt.Play.autoImport.cache // only when you use default IdContainer
+```
 * __for Play2.4.x__
 
         "jp.t2v" %% "play2-auth"        % "0.14.2",
@@ -334,7 +332,7 @@ To achieve this you could define `Authority` as a `Function`:
 ```scala
 trait AuthConfigImpl extends AuthConfig {
 
-  // Other setup is omitted. 
+  // Other setup is omitted.
 
   type Authority = User => Future[Boolean]
 
@@ -361,7 +359,7 @@ object Application extends Controller with AuthElement with AuthConfigImpl {
 
 ### Returning to the originally requested page after login
 
-When an unauthenticated user requests access to page requiring authentication, 
+When an unauthenticated user requests access to page requiring authentication,
 you first redirect the user to the login page, then, after the user successfully logs in, you redirect the user to the page they originally requested.
 
 To achieve this change `authenticationFailed` and `loginSucceeded`:
@@ -383,7 +381,7 @@ trait AuthConfigImpl extends AuthConfig {
 ```
 
 
-### Changing the display depending on whether the user is logged in 
+### Changing the display depending on whether the user is logged in
 
 If you want to display the application's index differently to non-logged-in users
 and logged-in users, you can use `OptionalAuthElement` instead of `AuthElement`:
@@ -491,7 +489,7 @@ object Application extends Controller with TokenValidateElement with AuthElement
 
 There are asynchronous libraries ( for example: [ReactiveMongo](http://reactivemongo.org/), [ScalikeJDBC-Async](https://github.com/scalikejdbc/scalikejdbc-async), and so on ).
 
-You should use `Future[Result]` instead of `AsyncResult` from Play2.2. 
+You should use `Future[Result]` instead of `AsyncResult` from Play2.2.
 
 You can use `AsyncStack` instead of `StackAction` for Future[Result]
 
@@ -509,7 +507,7 @@ trait HogeController extends AuthElement with AuthConfigImpl {
 ### Stateless vs Stateful implementation.
 
 Play2x-Auth follows the Play framework's stateless policy.
-However, Play2x-Auth's default implementation is stateful, 
+However, Play2x-Auth's default implementation is stateful,
 because the stateless implementation has the following security risk:
 
 If user logs-in to your application in a internet-cafe, then returns home neglecting to logout.
@@ -541,9 +539,9 @@ Running The Sample Application
 1. access to `http://localhost:9000/` on your browser.
     1. click `Apply this script now!`
     1. login
-    
+
         defined accounts
-        
+
             Email             | Password | Role
             alice@example.com | secret   | Administrator
             bob@example.com   | secret   | NormalUser
@@ -561,6 +559,5 @@ If you have distributed servers, use the [Memcached Plugin](https://github.com/m
 License
 ---------------------------------------
 
-This library is released under the Apache Software License, version 2, 
+This library is released under the Apache Software License, version 2,
 which should be included with the source in a file named `LICENSE`.
-
