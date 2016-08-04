@@ -7,7 +7,7 @@ import play.api.Logger
 import play.api.Play.current
 import play.api.http.{ HeaderNames, MimeTypes }
 import play.api.libs.ws.{ WS, WSResponse }
-import play.api.mvc.Results
+import play.api.mvc.{ AnyContent, Request, Results }
 
 import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.control.NonFatal
@@ -43,7 +43,8 @@ class FacebookAuthenticator extends OAuth2Authenticator {
       }
   }
 
-  def getAuthorizationUrl(scope: String, state: String): String = {
+  def getAuthorizationUrl(request: Request[AnyContent], state: String): String = {
+    val scope = request.getQueryString("scope").getOrElse("")
     val encodedClientId = URLEncoder.encode(clientId, "utf-8")
     val encodedRedirectUri = URLEncoder.encode(callbackUrl, "utf-8")
     val encodedScope = URLEncoder.encode(scope, "utf-8")
