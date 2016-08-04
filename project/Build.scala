@@ -14,7 +14,6 @@ object ApplicationBuild extends Build {
     crossScalaVersions := Seq("2.11.8"),
     organization       := "com.github.tototoshi",
     resolvers          ++=
-      Resolver.typesafeRepo("releases") ::
       Resolver.sonatypeRepo("releases") ::
       Nil,
     scalacOptions      ++= Seq("-language:_", "-deprecation")
