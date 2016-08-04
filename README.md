@@ -55,17 +55,23 @@ Add dependency declarations into your `Build.scala` or `build.sbt` file:
 * __for Play2.5.x__
 
 ```scala
-"com.github.tototoshi" %% "play2-auth"        % "0.15.0-SNAPSHOT",
-"com.github.tototoshi" %% "play2-auth-social" % "0.15.0-SNAPShOT", // for social login
-"com.github.tototoshi" %% "play2-auth-test"   % "0.15.0-SNAPSHOT" % "test",
-play.sbt.Play.autoImport.cache // only when you use default IdContainer
+  val appDependencies = Seq(
+    "com.github.tototoshi" %% "play2-auth"        % "0.15.0-SNAPSHOT",
+    "com.github.tototoshi" %% "play2-auth-social" % "0.15.0-SNAPShOT", // for social login
+    "com.github.tototoshi" %% "play2-auth-test"   % "0.15.0-SNAPSHOT" % "test",
+    play.sbt.Play.autoImport.cache // only when you use default IdContainer
+  )
 ```
 * __for Play2.4.x__
 
-        "jp.t2v" %% "play2-auth"        % "0.14.2",
-        "jp.t2v" %% "play2-auth-social" % "0.14.2", // for social login
-        "jp.t2v" %% "play2-auth-test"   % "0.14.2" % "test",
-        play.sbt.Play.autoImport.cache // only when you use default IdContainer
+```scala
+  val appDependencies = Seq(
+    "jp.t2v" %% "play2-auth"        % "0.14.2",
+    "jp.t2v" %% "play2-auth-social" % "0.14.2", // for social login
+    "jp.t2v" %% "play2-auth-test"   % "0.14.2" % "test",
+    play.sbt.Play.autoImport.cache // only when you use default IdContainer
+  )
+```scala
 
 For example your `Build.scala` might look like this:
 
