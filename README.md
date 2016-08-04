@@ -56,9 +56,9 @@ Add dependency declarations into your `Build.scala` or `build.sbt` file:
 
 ```scala
   val appDependencies = Seq(
-    "com.github.tototoshi" %% "play2-auth"        % "0.15.0-SNAPSHOT",
-    "com.github.tototoshi" %% "play2-auth-social" % "0.15.0-SNAPShOT", // for social login
-    "com.github.tototoshi" %% "play2-auth-test"   % "0.15.0-SNAPSHOT" % "test",
+    "com.github.tototoshi" %% "play2-auth"        % "0.15.0",
+    "com.github.tototoshi" %% "play2-auth-social" % "0.15.0", // for social login
+    "com.github.tototoshi" %% "play2-auth-test"   % "0.15.0" % "test",
     play.sbt.Play.autoImport.cache // only when you use default IdContainer
   )
 ```
@@ -103,7 +103,7 @@ Usage
        *
        * like this:
        *   class HomeController @Inject() (val environment: Environment, val cacheApi: CacheApi) with AuthConfigImpl ...
-       * 
+       *
        */
       val environment: Environment
       val cacheApi: CacheApi
@@ -142,7 +142,7 @@ Usage
       val sessionTimeoutInSeconds: Int = 3600
 
       /**
-       * idContainer with Cache API. 
+       * idContainer with Cache API.
        * cacheApi need to be defined in the class this trait is mixed into.
        */
       val idContainer: AsyncIdContainer[Id] = AsyncIdContainer(new CacheIdContainer[Id](cacheApi))

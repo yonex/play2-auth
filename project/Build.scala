@@ -9,7 +9,7 @@ object ApplicationBuild extends Build {
   val playVersion = play.core.PlayVersion.current
 
   lazy val baseSettings = Seq(
-    version            := "0.15.0-SNAPSHOT",
+    version            := "0.15.0",
     scalaVersion       := "2.11.8",
     crossScalaVersions := Seq("2.11.8"),
     organization       := "com.github.tototoshi",
