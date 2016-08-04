@@ -71,7 +71,7 @@ Add dependency declarations into your `Build.scala` or `build.sbt` file:
     "jp.t2v" %% "play2-auth-test"   % "0.14.2" % "test",
     play.sbt.Play.autoImport.cache // only when you use default IdContainer
   )
-```scala
+```
 
 For example your `Build.scala` might look like this:
 
@@ -92,8 +92,21 @@ Usage
     ```scala
     // Example
     import com.github.tototoshi.play2.auth._
+    import play.api.{ Environment, Mode }
+    import play.api.cache.CacheApi
+
 
     trait AuthConfigImpl extends AuthConfig {
+
+      /**
+       * Environment and CacheApi is provided via the controller this trait is mixed in.
+       *
+       * like this:
+       *   class HomeController @Inject() (val environment: Environment, val cacheApi: CacheApi) with AuthConfigImpl ...
+       * 
+       */
+      val environment: Environment
+      val cacheApi: CacheApi
 
       /**
        * A type that is used to identify a user.
@@ -127,6 +140,12 @@ Usage
        * The session timeout in seconds
        */
       val sessionTimeoutInSeconds: Int = 3600
+
+      /**
+       * idContainer with Cache API. 
+       * cacheApi need to be defined in the class this trait is mixed into.
+       */
+      val idContainer: AsyncIdContainer[Id] = AsyncIdContainer(new CacheIdContainer[Id](cacheApi))
 
       /**
        * A function that returns a `User` object from an `Id`.
@@ -519,7 +538,7 @@ because the stateless implementation has the following security risk:
 If user logs-in to your application in a internet-cafe, then returns home neglecting to logout.
 If the user logs in again at home they will *not* invalidate the session.
 
-Nevertheless, you want to use a fully stateless implementation then just override the `idContainer` method of `AuthConfig` like this:
+Nevertheless, you want to use a fully stateless implementation then just define custom `idContainer` method of `AuthConfig` like this:
 
 ```scala
 trait AuthConfigImpl extends AuthConfig {
